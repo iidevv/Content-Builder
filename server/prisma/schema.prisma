@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Instance {
+  id             String     @id @default(cuid())
+  companyName    String     @unique
+  companyWebsite String     @unique
+  phoneNumber    String     @unique
+  users          User[]     @relation("InstanceToUsers")
+  templates      Template[]
+  settings       Setting[]
+  stores         Store[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  @@map("instances")
+}
+
+model User {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  name            String?
+  password        String
+  role            Role       @default(ADMIN)
+  instanceId      String
+  instance        Instance   @relation("InstanceToUsers", fields: [instanceId], references: [id])
+  managerProducts Template[] @relation("ManagerToTemplates")
+  templates       Template[] @relation("UserToTemplates")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([instanceId])
+  @@map("users")
+}
+
+model Template {
+  id         Int      @id @default(autoincrement())
+  userId     String
+  instanceId String
+  managerId  String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user     User     @relation("UserToTemplates", fields: [userId], references: [id])
+  manager  User?    @relation("ManagerToTemplates", fields: [managerId], references: [id])
+  instance Instance @relation(fields: [instanceId], references: [id])
+
+  sections Section[]
+
+  @@index([instanceId])
+  @@index([userId])
+  @@index([managerId])
+  @@map("templates")
+}
+
+model Section {
+  id         Int      @id @default(autoincrement())
+  name       String
+  content    String
+  templateId Int
+  mediaId    Int?
+  template   Template @relation(fields: [templateId], references: [id])
+  media      Media?   @relation(fields: [mediaId], references: [id])
+}
+
+model Media {
+  id         Int      @id @default(autoincrement())
+  url        String
+  type       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  sections   Section[]
+
+  @@map("media")
+}
+
+model Setting {
+  id         Int      @id @default(autoincrement())
+  instanceId String
+  key        String   @unique
+  value      String
+  instance   Instance @relation(fields: [instanceId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([instanceId])
+  @@map("settings")
+}
+
+model Store {
+  id         Int      @id @default(autoincrement())
+  type       String
+  storeUrl   String
+  instanceId String
+  instance   Instance @relation(fields: [instanceId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([instanceId])
+  @@map("stores")
+}
+
+enum Role {
+  SUPER_ADMIN
+  ADMIN
+  MANAGER
+}
