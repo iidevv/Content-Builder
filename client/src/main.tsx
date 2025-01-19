@@ -11,6 +11,10 @@ import ErrorPage from './error-page.tsx';
 import Dashboard from './routes/Dashboard';
 import store from "./redux/store.ts";
 import './index.css'
+import Templates from './routes/Templates.tsx';
+import Media from './routes/Media.tsx';
+import Billing from './routes/Billing.tsx';
+import Settings from './routes/Settings.tsx';
 
 function AuthRoute({ component: Component, ...rest }) {
   const isAuthenticated = Cookies.get("userID") ? true : false;
@@ -43,6 +47,22 @@ const router = createBrowserRouter([
         index: true,
         element: <Dashboard />,
       },
+      {
+        path: "/templates",
+        element: <Templates />,
+      },
+      {
+        path: "/media",
+        element: <Media />,
+      },
+      {
+        path: "/billing",
+        element: <Billing />,
+      },
+      {
+        path: "/settings",
+        element: <Settings />,
+      }
     ],
   },
 ]);
