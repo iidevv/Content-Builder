@@ -15,9 +15,25 @@ import Templates from './routes/Templates.tsx';
 import Media from './routes/Media.tsx';
 import Billing from './routes/Billing.tsx';
 import Settings from './routes/Settings.tsx';
+import { jwtDecode } from 'jwt-decode';
 
 function AuthRoute({ component: Component, ...rest }) {
-  const isAuthenticated = Cookies.get("userID") ? true : false;
+  let isAuthenticated = false;
+
+  const token = Cookies.get("token");
+
+  let decoded: any;
+  if (token) {
+    try {
+      decoded = jwtDecode(token);
+      
+      const now = Date.now() / 1000;
+      isAuthenticated = decoded.exp > now;
+    } catch (error) {
+      console.error("Invalid token:", error);
+    }
+  }
+
   const navigate = useNavigate();
 
   useEffect(() => {

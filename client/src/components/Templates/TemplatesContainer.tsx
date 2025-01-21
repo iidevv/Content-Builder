@@ -4,11 +4,11 @@ import { compose } from "redux";
 import { useLocation } from "react-router-dom";
 import {
     getTemplates,
-    setOffset,
+    setPage,
     setTemplates,
     setSearch,
     setToggleIsFetching,
-} from "../../redux/reducers/TemplatesReducer.ts";
+} from "../../redux/reducers/templatesReducer.ts";
 import Preloader from "../common/Preloader/Preloader.js";
 import Templates from './Templates';
 
@@ -26,13 +26,13 @@ function TemplatesContainer({
     const prevSearch = useRef();
 
     useEffect(() => {
-        const { offset, search } = parseUrlParams();
-        getTemplates(offset, search);
+        const { page, search } = parseUrlParams();
+        getTemplates(page, search);
     }, [location]);
 
     useEffect(() => {
         if (meta.current !== prevMeta.current || search !== prevSearch.current) {
-            const newUrl = `${window.location.origin}${window.location.pathname}?offset=${meta.current}&search=${search}`;
+            const newUrl = `${window.location.origin}${window.location.pathname}?page=${meta.current}&search=${search}`;
             window.history.pushState({ path: newUrl }, "", newUrl);
         }
 
@@ -43,27 +43,27 @@ function TemplatesContainer({
     const parseUrlParams = () => {
         const queryString = location.search;
         const urlParams = new URLSearchParams(queryString);
-        const offset = urlParams.get("offset");
+        const page = urlParams.get("page");
         const searchFromUrl = urlParams.get("search");
 
         if (searchFromUrl !== null) setSearch(searchFromUrl);
 
-        return { offset, search: searchFromUrl };
+        return { page, search: searchFromUrl };
     };
 
-    const onPageChanged = (offset: Number) => {
-        getTemplates(offset, search);
+    const onPageChanged = (page: Number) => {
+        getTemplates(page, search);
         const container = document.querySelector(".scroll-container");
         if (container) container.scrollTo(0, 0);
     };
 
-    const onSearch = (offset: Number, search: String) => {
+    const onSearch = (page: Number, search: String) => {
         if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
         }
         setSearch(search);
         searchTimeout.current = setTimeout(() => {
-            getTemplates(offset, search);
+            getTemplates(page, search);
         }, 500);
     };
 
@@ -95,7 +95,7 @@ export default compose(
         getTemplates,
         setTemplates,
         setSearch,
-        setOffset,
+        setPage,
         setToggleIsFetching,
     })
 )(TemplatesContainer);

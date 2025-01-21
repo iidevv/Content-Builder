@@ -5,6 +5,7 @@ import { authRouter } from "./routes/authRouter";
 import { templatesRouter } from "./routes/templatesRouter";
 import cors from "cors";
 import { config } from "dotenv";
+import cookieParser from "cookie-parser";
 
 config();
 
@@ -21,9 +22,10 @@ async function main() {
   app.use(express.json());
 
   app.use(passport.initialize());
+  app.use(cookieParser());
 
   app.use("/auth", authRouter);
-  app.use("/content", templatesRouter);
+  app.use("/", templatesRouter);
 
   app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);

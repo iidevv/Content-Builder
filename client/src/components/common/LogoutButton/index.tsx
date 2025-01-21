@@ -2,8 +2,7 @@ import Cookies from "js-cookie";
 
 const LogoutButton = () => {
   const handleLogout = () => {
-    Cookies.remove("access_token");
-    Cookies.remove("userID");
+    Cookies.remove("token");
     window.location.reload();
   };
 

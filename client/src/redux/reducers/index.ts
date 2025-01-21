@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
-import TemplatesReducer from "./TemplatesReducer";
+import templatesReducer from "./templatesReducer";
 
 export default combineReducers({
-  templates: TemplatesReducer,
+  templates: templatesReducer,
 });

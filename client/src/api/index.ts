@@ -8,7 +8,7 @@ export const instance = axios.create({
 export const templatesAPI = {
   getTemplates(page, search) {
     return instance
-      .get(`/content/templates/`, {
+      .get(`/templates/`, {
         params: {
           page,
           search,

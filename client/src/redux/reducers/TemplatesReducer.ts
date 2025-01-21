@@ -3,23 +3,23 @@ import { templatesAPI } from "../../api/index";
 const SET_TEMPLATES = "SET_TEMPLATES";
 const SET_META = "SET_META";
 const SET_SEARCH = "SET_SEARCH";
-const SET_OFFSET = "SET_OFFSET";
+const SET_PAGE = "SET_PAGE";
 const TOGGLE_IS_FETCHING = "TOGGLE_IS_FETCHING";
 
 let initialState = {
   search: "",
-  offset: 0,
+  page: 1,
   templates: [],
   meta: {
-    current: "",
-    next: "",
-    prev: "",
-    total: null,
+    current: 1,
+    next: 1,
+    prev: 1,
+    total: 1,
   },
   isFetching: true,
 };
 
-const TemplatesReducer = (state = initialState, action) => {
+const templatesReducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_TEMPLATES:
       return {
@@ -36,10 +36,10 @@ const TemplatesReducer = (state = initialState, action) => {
         ...state,
         search: action.search,
       };
-    case SET_OFFSET:
+    case SET_PAGE:
       return {
         ...state,
-        offset: action.offset,
+        page: action.page,
       };
     case TOGGLE_IS_FETCHING:
       return {
@@ -73,10 +73,10 @@ export const setSearch = (search) => {
   };
 };
 
-export const setOffset = (offset) => {
+export const setPage = (page) => {
   return {
-    type: SET_OFFSET,
-    offset,
+    type: SET_PAGE,
+    page,
   };
 };
 
@@ -87,16 +87,16 @@ export const setToggleIsFetching = (isFetching) => {
   };
 };
 
-export const getTemplates = (offset, search) => {
+export const getTemplates = (page, search) => {
   return (dispatch) => {
     dispatch(setToggleIsFetching(true));
-    templatesAPI.getTemplates(offset, search).then((data) => {
-      dispatch(setTemplates(data.data));
+    templatesAPI.getTemplates(page, search).then((data) => {
+      dispatch(setTemplates(data.templates));
       dispatch(setMeta(data.meta));
-      dispatch(setOffset(offset));
+      dispatch(setPage(page));
       dispatch(setToggleIsFetching(false));
     });
   };
 };
 
-export default TemplatesReducer;
+export default templatesReducer;
