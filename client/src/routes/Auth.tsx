@@ -38,7 +38,8 @@ const Login = () => {
         password,
         // recaptcha: recaptchaValue,
       });
-      Cookies.set("userID", result.data.userID, { expires: 2 });
+      const token = result.data.token;
+      Cookies.set("token", token, { expires: 2 });
       setResponse("Logged in!");
       navigate("/");
 
