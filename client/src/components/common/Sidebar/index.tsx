@@ -63,8 +63,8 @@ const Sidebar = () => {
           </div>
           <nav className="mt-6">
             <ul>
-              {menuItems.map(item => (
-                <li>
+              {menuItems.map((item, i) => (
+                <li key={i}>
                   <NavLink
                     to={item.url}
                     onClick={handleSetMenuActive}

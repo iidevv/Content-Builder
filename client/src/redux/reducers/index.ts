@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
+import TemplatesReducer from "./TemplatesReducer";
 
 export default combineReducers({
-  // dashboard: dashboardReducer,
+  templates: TemplatesReducer,
 });

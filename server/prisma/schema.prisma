@@ -44,6 +44,7 @@ model Template {
   userId     String
   instanceId String
   managerId  String?
+  title      String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -70,12 +71,12 @@ model Section {
 }
 
 model Media {
-  id         Int      @id @default(autoincrement())
-  url        String
-  type       String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  sections   Section[]
+  id        Int       @id @default(autoincrement())
+  url       String
+  type      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sections  Section[]
 
   @@map("media")
 }

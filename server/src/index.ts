@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import { prisma } from "./models/prisma";
 import passport from "passport";
-import authRoutes from "./routes/authRoutes";
+import { authRouter } from "./routes/authRouter";
+import { templatesRouter } from "./routes/templatesRouter";
 import cors from "cors";
 import { config } from "dotenv";
 
@@ -21,7 +22,8 @@ async function main() {
 
   app.use(passport.initialize());
 
-  app.use("/auth", authRoutes);
+  app.use("/auth", authRouter);
+  app.use("/content", templatesRouter);
 
   app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
