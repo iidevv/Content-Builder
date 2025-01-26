@@ -1,5 +1,5 @@
 import { useRouteError } from "react-router-dom";
-import img from "./assets/404.svg";
+import img from "./assets/images/404.svg";
 export default function ErrorPage() {
   const error = useRouteError();
   console.error(error);

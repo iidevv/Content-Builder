@@ -1,10 +1,19 @@
-import { createRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import logo from "../assets/logo.svg";
-import { instance } from "../api";
+import { instance } from "../../api";
 import Cookies from "js-cookie";
+import { isAuthenticated } from "../../utils/auth";
 // import ReCAPTCHA from "react-google-recaptcha";
 export const Auth = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated()) {
+      navigate("/");
+    }
+  }, [navigate]);
+  
   return (
     <div className="auth">
       <Login />

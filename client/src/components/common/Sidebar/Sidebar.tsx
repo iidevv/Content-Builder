@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
-import LogoutButton from "../LogoutButton";
+import LogoutButton from "../LogoutButton/LogoutButton";
 import { menuItems } from '../../../lib/constant';
 
 const Sidebar = () => {

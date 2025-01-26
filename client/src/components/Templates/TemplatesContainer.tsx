@@ -10,10 +10,11 @@ import {
     setToggleIsFetching,
 } from "../../redux/reducers/templatesReducer.ts";
 import Preloader from "../common/Preloader/Preloader.js";
-import Templates from './Templates';
+import Templates from './Templates.tsx';
 
 function TemplatesContainer({
-    meta,
+    page,
+    totalPages,
     search,
     templates,
     isFetching,
@@ -22,7 +23,7 @@ function TemplatesContainer({
 }) {
     const location = useLocation();
     const searchTimeout = useRef(null);
-    const prevMeta = useRef();
+    const prevPage = useRef();
     const prevSearch = useRef();
 
     useEffect(() => {
@@ -31,14 +32,14 @@ function TemplatesContainer({
     }, [location]);
 
     useEffect(() => {
-        if (meta.current !== prevMeta.current || search !== prevSearch.current) {
-            const newUrl = `${window.location.origin}${window.location.pathname}?page=${meta.current}&search=${search}`;
+        if (page !== prevPage.current || search !== prevSearch.current) {
+            const newUrl = `${window.location.origin}${window.location.pathname}?page=${page}&search=${search}`;
             window.history.pushState({ path: newUrl }, "", newUrl);
         }
 
-        prevMeta.current = meta;
+        prevPage.current = page;
         prevSearch.current = search;
-    }, [meta, search]);
+    }, [page, search]);
 
     const parseUrlParams = () => {
         const queryString = location.search;
@@ -67,14 +68,19 @@ function TemplatesContainer({
         }, 500);
     };
 
+    const onAddNewTemplate = () => {
+        
+    }
+
     return (
         <div>
             {isFetching ? <Preloader /> : null}
             <Templates
                 templates={templates}
-                meta={meta}
+                totalPages={totalPages}
                 search={search}
                 onPageChanged={onPageChanged}
+                onAddNewTemplate={onAddNewTemplate}
                 onSearch={onSearch}
             />
         </div>
@@ -85,7 +91,8 @@ let mapStateToProps = (state) => {
     return {
         templates: state.templates.items,
         search: state.templates.search,
-        meta: state.templates.meta,
+        page: state.templates.page,
+        totalPages: state.templates.totalPages,
         isFetching: state.templates.isFetching,
     };
 };

@@ -1,7 +1,7 @@
 import { templatesAPI } from "../../api/index";
 
 const SET_TEMPLATES = "SET_TEMPLATES";
-const SET_META = "SET_META";
+const SET_TOTAL_PAGES = "SET_TOTAL_PAGES";
 const SET_SEARCH = "SET_SEARCH";
 const SET_PAGE = "SET_PAGE";
 const TOGGLE_IS_FETCHING = "TOGGLE_IS_FETCHING";
@@ -9,13 +9,8 @@ const TOGGLE_IS_FETCHING = "TOGGLE_IS_FETCHING";
 let initialState = {
   search: "",
   page: 1,
+  totalPages: 1,
   templates: [],
-  meta: {
-    current: 1,
-    next: 1,
-    prev: 1,
-    total: 1,
-  },
   isFetching: true,
 };
 
@@ -26,10 +21,10 @@ const templatesReducer = (state = initialState, action) => {
         ...state,
         templates: [...action.templates],
       };
-    case SET_META:
+    case SET_TOTAL_PAGES:
       return {
         ...state,
-        meta: action.meta,
+        meta: action.totalPages,
       };
     case SET_SEARCH:
       return {
@@ -59,10 +54,10 @@ export const setTemplates = (templates) => {
   };
 };
 
-export const setMeta = (meta) => {
+export const setTotalPages = (totalPages) => {
   return {
-    type: SET_META,
-    meta,
+    type: SET_TOTAL_PAGES,
+    totalPages,
   };
 };
 
@@ -92,7 +87,7 @@ export const getTemplates = (page, search) => {
     dispatch(setToggleIsFetching(true));
     templatesAPI.getTemplates(page, search).then((data) => {
       dispatch(setTemplates(data.templates));
-      dispatch(setMeta(data.meta));
+      dispatch(setTotalPages(data.totalPages));
       dispatch(setPage(page));
       dispatch(setToggleIsFetching(false));
     });
