@@ -18,4 +18,11 @@ export const templatesAPI = {
         return response.data;
       });
   },
+  addTemplate() {
+    return instance.post(`/templates/`).then((response) => {
+      return response.data;
+    });
+  },
 };
+
+export const templateAPI = {};

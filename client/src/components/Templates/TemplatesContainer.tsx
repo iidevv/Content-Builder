@@ -1,16 +1,19 @@
 import { useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { compose } from "redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
     getTemplates,
     setPage,
     setTemplates,
     setSearch,
     setToggleIsFetching,
+    addTemplate
 } from "../../redux/reducers/templatesReducer.ts";
 import Preloader from "../common/Preloader/Preloader.js";
 import Templates from './Templates.tsx';
+import { State, TemplatesContainerProps } from "../../types/templates.types.ts";
+
 
 function TemplatesContainer({
     page,
@@ -20,14 +23,17 @@ function TemplatesContainer({
     isFetching,
     getTemplates,
     setSearch,
-}) {
+    addTemplate
+}: TemplatesContainerProps) {
     const location = useLocation();
-    const searchTimeout = useRef(null);
-    const prevPage = useRef();
-    const prevSearch = useRef();
+    const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const prevPage = useRef<number | undefined>(undefined);
+    const prevSearch = useRef<string | undefined>(undefined);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const { page, search } = parseUrlParams();
+        setSearch(search);
         getTemplates(page, search);
     }, [location]);
 
@@ -41,24 +47,25 @@ function TemplatesContainer({
         prevSearch.current = search;
     }, [page, search]);
 
-    const parseUrlParams = () => {
-        const queryString = location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const page = urlParams.get("page");
-        const searchFromUrl = urlParams.get("search");
+    const parseUrlParams = (): { page: number; search: string } => {
+        const urlParams = new URLSearchParams(location.search);
 
-        if (searchFromUrl !== null) setSearch(searchFromUrl);
+        const search = urlParams.get("search") || "";
+        const page = parseInt(urlParams.get("page") || "1", 10);
 
-        return { page, search: searchFromUrl };
+        return {
+            page,
+            search,
+        };
     };
 
-    const onPageChanged = (page: Number) => {
+    const onPageChanged = (page: number) => {
         getTemplates(page, search);
         const container = document.querySelector(".scroll-container");
         if (container) container.scrollTo(0, 0);
     };
 
-    const onSearch = (page: Number, search: String) => {
+    const onSearch = (page: number, search: string) => {
         if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
         }
@@ -68,8 +75,15 @@ function TemplatesContainer({
         }, 500);
     };
 
-    const onAddNewTemplate = () => {
-        
+    const onAddNewTemplate = async () => {
+        try {
+            const newTemplateId = await addTemplate();
+            if (newTemplateId) {
+                navigate(`/templates/${newTemplateId}`);
+            }
+        } catch (error) {
+            console.error("Failed:", error);
+        }
     }
 
     return (
@@ -87,7 +101,7 @@ function TemplatesContainer({
     );
 }
 
-let mapStateToProps = (state) => {
+let mapStateToProps = (state: State) => {
     return {
         templates: state.templates.items,
         search: state.templates.search,
@@ -104,5 +118,6 @@ export default compose(
         setSearch,
         setPage,
         setToggleIsFetching,
+        addTemplate
     })
 )(TemplatesContainer);

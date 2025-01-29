@@ -7,7 +7,7 @@ const Templates = (props) => {
     props.onSearch("", search);
   };
 
-  const onPageChanged = (page) => {
+  const onPageChanged = (page: number) => {
     props.onPageChanged(page, props.search);
   };
 
@@ -23,7 +23,7 @@ const Templates = (props) => {
       <Button onClick={onAddNewTemplate}>Add new</Button>
       {props.templates && (
         <>
-          <div className="flex flex-col-reverse lg:flex-row">
+          <div className="flex mt-4 flex-col-reverse lg:flex-row">
             <div className="flex w-full shadow bg-white p-2">
               <input
                 type="text"
@@ -70,18 +70,20 @@ const Templates = (props) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {props.templates.map(t => (
-                    <TemplateItem
-                      key={t.id}
-                      id={t.id}
-                      name={t.name}
-                      url={t.url}
-                      sku={t.sku}
-                      image_url={t.image_url}
-                      price={t.price}
-                      inventory={t.inventory}
-                    />
-                  ))}
+                  {props.templates.map(t => {
+                    console.log(t);
+
+                    return (
+                      <TemplateItem
+                        key={t.id}
+                        id={t.id}
+                        image_url={t.image_url}
+                        title={t.title}
+                        createdAt={t.createdAt}
+                        updatedAt={t.updatedAt}
+                      />
+                    )
+                  })}
                 </tbody>
               </table>
               <div className="flex flex-col items-center px-5 py-5 bg-white xs:flex-row xs:justify-between">

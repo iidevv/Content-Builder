@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import logo from "../assets/logo.svg";
-import { instance } from "../../api";
+import { instance } from "../../api/api";
 import Cookies from "js-cookie";
 import { isAuthenticated } from "../../utils/auth";
 // import ReCAPTCHA from "react-google-recaptcha";
