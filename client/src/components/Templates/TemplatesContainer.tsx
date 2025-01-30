@@ -1,123 +1,77 @@
 import { useEffect, useRef } from "react";
-import { connect } from "react-redux";
-import { compose } from "redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import Preloader from "../common/Preloader/Preloader";
+import Templates from "./Templates";
 import {
     getTemplates,
-    setPage,
-    setTemplates,
     setSearch,
-    setToggleIsFetching,
-    addTemplate
-} from "../../redux/reducers/templatesReducer.ts";
-import Preloader from "../common/Preloader/Preloader.js";
-import Templates from './Templates.tsx';
-import { State, TemplatesContainerProps } from "../../types/templates.types.ts";
+} from "../../redux/reducers/templatesSlice";
 
-
-function TemplatesContainer({
-    page,
-    totalPages,
-    search,
-    templates,
-    isFetching,
-    getTemplates,
-    setSearch,
-    addTemplate
-}: TemplatesContainerProps) {
+const TemplatesContainer = () => {
+    const dispatch = useDispatch();
     const location = useLocation();
-    const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const prevPage = useRef<number | undefined>(undefined);
-    const prevSearch = useRef<string | undefined>(undefined);
-    const navigate = useNavigate();
+    const searchTimeout = useRef(null);
 
+    // Select state from Redux store
+    const { templates, meta, search, isFetching } = useSelector(
+        (state) => state.templates
+    );
+
+    // Parse URL params and fetch templates on mount or URL change
     useEffect(() => {
         const { page, search } = parseUrlParams();
-        setSearch(search);
-        getTemplates(page, search);
-    }, [location]);
+        dispatch(getTemplates({ page, search }));
+    }, [location, dispatch]);
 
+    // Update URL when meta or search changes
     useEffect(() => {
-        if (page !== prevPage.current || search !== prevSearch.current) {
-            const newUrl = `${window.location.origin}${window.location.pathname}?page=${page}&search=${search}`;
-            window.history.pushState({ path: newUrl }, "", newUrl);
-        }
+        const newUrl = `${window.location.origin}${window.location.pathname}?page=${meta.current}&search=${search}`;
+        window.history.pushState({ path: newUrl }, "", newUrl);
+    }, [meta, search]);
 
-        prevPage.current = page;
-        prevSearch.current = search;
-    }, [page, search]);
+    // Parse URL params
+    const parseUrlParams = () => {
+        const queryString = location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const page = urlParams.get("page") || 1;
+        const searchFromUrl = urlParams.get("search") || "";
 
-    const parseUrlParams = (): { page: number; search: string } => {
-        const urlParams = new URLSearchParams(location.search);
+        if (searchFromUrl !== null) dispatch(setSearch(searchFromUrl));
 
-        const search = urlParams.get("search") || "";
-        const page = parseInt(urlParams.get("page") || "1", 10);
-
-        return {
-            page,
-            search,
-        };
+        return { page: Number(page), search: searchFromUrl };
     };
 
-    const onPageChanged = (page: number) => {
-        getTemplates(page, search);
+    // Handle page change
+    const onPageChanged = (page) => {
+        dispatch(getTemplates({ page, search }));
         const container = document.querySelector(".scroll-container");
         if (container) container.scrollTo(0, 0);
     };
 
-    const onSearch = (page: number, search: string) => {
+    // Handle search with debounce
+    const onSearch = (search) => {
         if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
         }
-        setSearch(search);
+        dispatch(setSearch(search));
         searchTimeout.current = setTimeout(() => {
-            getTemplates(page, search);
+            dispatch(getTemplates({ page: 1, search }));
         }, 500);
     };
-
-    const onAddNewTemplate = async () => {
-        try {
-            const newTemplateId = await addTemplate();
-            if (newTemplateId) {
-                navigate(`/templates/${newTemplateId}`);
-            }
-        } catch (error) {
-            console.error("Failed:", error);
-        }
-    }
 
     return (
         <div>
             {isFetching ? <Preloader /> : null}
             <Templates
                 templates={templates}
-                totalPages={totalPages}
+                meta={meta}
                 search={search}
                 onPageChanged={onPageChanged}
-                onAddNewTemplate={onAddNewTemplate}
                 onSearch={onSearch}
             />
         </div>
     );
-}
-
-let mapStateToProps = (state: State) => {
-    return {
-        templates: state.templates.items,
-        search: state.templates.search,
-        page: state.templates.page,
-        totalPages: state.templates.totalPages,
-        isFetching: state.templates.isFetching,
-    };
 };
 
-export default compose(
-    connect(mapStateToProps, {
-        getTemplates,
-        setTemplates,
-        setSearch,
-        setPage,
-        setToggleIsFetching,
-        addTemplate
-    })
-)(TemplatesContainer);
+export default TemplatesContainer;
