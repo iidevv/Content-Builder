@@ -4,33 +4,30 @@ import { useLocation } from "react-router-dom";
 import Preloader from "../common/Preloader/Preloader";
 import Templates from "./Templates";
 import {
+    addTemplate,
     getTemplates,
     setSearch,
 } from "../../redux/reducers/templatesSlice";
 
 const TemplatesContainer = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch<typeof store.dispatch>();
     const location = useLocation();
-    const searchTimeout = useRef(null);
+    const searchTimeout = useRef<null | ReturnType<typeof setTimeout>>(null);
 
-    // Select state from Redux store
-    const { templates, meta, search, isFetching } = useSelector(
+    const { templates, page, search, isFetching } = useSelector(
         (state) => state.templates
     );
 
-    // Parse URL params and fetch templates on mount or URL change
     useEffect(() => {
         const { page, search } = parseUrlParams();
         dispatch(getTemplates({ page, search }));
     }, [location, dispatch]);
 
-    // Update URL when meta or search changes
     useEffect(() => {
-        const newUrl = `${window.location.origin}${window.location.pathname}?page=${meta.current}&search=${search}`;
+        const newUrl = `${window.location.origin}${window.location.pathname}?page=${page}&search=${search}`;
         window.history.pushState({ path: newUrl }, "", newUrl);
-    }, [meta, search]);
+    }, [page, search]);
 
-    // Parse URL params
     const parseUrlParams = () => {
         const queryString = location.search;
         const urlParams = new URLSearchParams(queryString);
@@ -42,15 +39,13 @@ const TemplatesContainer = () => {
         return { page: Number(page), search: searchFromUrl };
     };
 
-    // Handle page change
-    const onPageChanged = (page) => {
+    const onPageChanged = (page: string) => {
         dispatch(getTemplates({ page, search }));
         const container = document.querySelector(".scroll-container");
         if (container) container.scrollTo(0, 0);
     };
 
-    // Handle search with debounce
-    const onSearch = (search) => {
+    const onSearch = (search: string) => {
         if (searchTimeout.current) {
             clearTimeout(searchTimeout.current);
         }
@@ -60,15 +55,20 @@ const TemplatesContainer = () => {
         }, 500);
     };
 
+    const onAddNewTemplate = () => {
+        dispatch(addTemplate());
+    }
+
     return (
         <div>
             {isFetching ? <Preloader /> : null}
             <Templates
                 templates={templates}
-                meta={meta}
+                page={page}
                 search={search}
                 onPageChanged={onPageChanged}
                 onSearch={onSearch}
+                onAddNewTemplate={onAddNewTemplate}
             />
         </div>
     );

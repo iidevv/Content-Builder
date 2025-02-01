@@ -6,13 +6,8 @@ const templatesSlice = createSlice({
   initialState: {
     search: "",
     page: 1,
+    totalPages: 1,
     templates: [],
-    meta: {
-      current: 1,
-      next: 1,
-      prev: 1,
-      total: 1,
-    },
     isFetching: false,
     error: null,
   },
@@ -20,8 +15,8 @@ const templatesSlice = createSlice({
     setTemplates: (state, action) => {
       state.templates = action.payload;
     },
-    setMeta: (state, action) => {
-      state.meta = action.payload;
+    setTotalPages: (state, action) => {
+      state.totalPages = action.payload;
     },
     setSearch: (state, action) => {
       state.search = action.payload;
@@ -46,7 +41,7 @@ const templatesSlice = createSlice({
       .addCase(getTemplates.fulfilled, (state, action) => {
         state.isFetching = false;
         state.templates = action.payload.templates;
-        state.meta = action.payload.meta;
+        state.totalPages = action.payload.totalPages;
       })
       .addCase(getTemplates.rejected, (state, action) => {
         state.isFetching = false;
