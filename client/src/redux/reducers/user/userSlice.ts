@@ -4,20 +4,18 @@ import { authAPI } from "../../../api/api";
 import { jwtDecode } from "jwt-decode";
 
 interface UserState {
-  email: string;
-  password: string;
   name: string | null;
   token: string | null;
   isAuthenticated: boolean;
+  loading: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
-  email: "",
-  password: "",
   name: null,
   token: Cookies.get("token") || null,
   isAuthenticated: !!Cookies.get("token"),
+  loading: false,
   error: null,
 };
 
@@ -25,13 +23,7 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setEmail: (state, action) => {
-      state.email = action.payload;
-    },
-    setPassword: (state, action) => {
-      state.password = action.payload;
-    },
-    logout: (state) => {
+    logoutUser: (state) => {
       state.token = null;
       state.isAuthenticated = false;
       Cookies.remove("token");
@@ -53,8 +45,6 @@ const userSlice = createSlice({
             });
 
             state.token = token;
-            state.email = "";
-            state.password = "";
             state.isAuthenticated = true;
           } else {
             throw new Error("Token expiration date is missing");
@@ -63,11 +53,54 @@ const userSlice = createSlice({
           state.token = null;
           state.isAuthenticated = false;
           Cookies.remove("token");
+        } finally {
+          state.loading = false;
         }
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.error = action.payload as string;
         state.isAuthenticated = false;
+        state.loading = false;
+      })
+
+      .addCase(registerUser.fulfilled, (state, action) => {
+        const token = action.payload.token;
+
+        try {
+          const decodedToken = jwtDecode(token);
+          if (decodedToken.exp) {
+            const expirationDate = new Date(decodedToken.exp * 1000);
+            Cookies.set("token", token, {
+              expires: expirationDate,
+              secure: true,
+              sameSite: "Strict",
+            });
+
+            state.token = token;
+            state.isAuthenticated = true;
+          } else {
+            throw new Error("Token expiration date is missing");
+          }
+        } catch (error) {
+          state.token = null;
+          state.isAuthenticated = false;
+          Cookies.remove("token");
+        } finally {
+          state.loading = false;
+        }
+      })
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+        state.loading = false;
       });
   },
 });
@@ -75,21 +108,41 @@ const userSlice = createSlice({
 export const loginUser = createAsyncThunk(
   "user/login",
   async (
-    { email, password }: { email: string; password: string },
+    data: {},
     { rejectWithValue }
   ) => {
     try {
-      const result = await authAPI.login(email, password);
+      const result = await authAPI.login(data);
+
       return result.data;
     } catch (error) {
       return rejectWithValue(
         (error as any).response?.data?.message ||
-          "An error occurred during login"
+        "An error occurred during login. Please try again."
       );
     }
   }
 );
 
-export const { setEmail, setPassword, logout } = userSlice.actions;
+export const registerUser = createAsyncThunk(
+  "user/register",
+  async (
+    data: {},
+    { rejectWithValue }
+  ) => {
+    try {
+      const result = await authAPI.register(data);
+
+      return result.data;
+    } catch (error) {
+      return rejectWithValue(
+        (error as any).response?.data?.message ||
+        "An error occurred during registration. Please try again."
+      );
+    }
+  }
+);
+
+export const { logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;

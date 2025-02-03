@@ -6,12 +6,11 @@ export const instance = axios.create({
 });
 
 export const authAPI = {
-  login(email: string, password: string) {
-    return instance.post("/auth/login", {
-      email,
-      password,
-      // recaptcha: recaptchaValue,
-    });
+  login(data = {}) {
+    return instance.post("/auth/login", data);
+  },
+  register(data = {}) {
+    return instance.post("/auth/register", data);
   },
 };
 

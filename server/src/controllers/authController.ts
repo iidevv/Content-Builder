@@ -97,5 +97,5 @@ export const signUp = async (req: Request, res: Response) => {
     { expiresIn: "1h" }
   );
 
-  return res.json({ token });
+  return res.json({ token, user: { email: newUser.email, name: newUser.name } });
 };

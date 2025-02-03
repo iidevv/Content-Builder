@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Auth from "../components/Auth/Auth";
 import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
+import Login from "../components/Auth/Login";
 
-function AuthRoute({ component: Component }: { component: React.ElementType }) {
+function ProtectedRoute({ component: Component }: { component: React.ElementType }) {
     const navigate = useNavigate();
     const { isAuthenticated } = useSelector(
         (state: RootState) => state.user
@@ -12,15 +12,15 @@ function AuthRoute({ component: Component }: { component: React.ElementType }) {
 
     useEffect(() => {
         if (!isAuthenticated) {
-            navigate("/auth");
+            navigate("/login");
         }
     }, [isAuthenticated, navigate]);
 
     if (!isAuthenticated) {
-        return <Auth />;
+        return <Login />;
     }
 
     return <Component />;
 }
 
-export default AuthRoute;
+export default ProtectedRoute;

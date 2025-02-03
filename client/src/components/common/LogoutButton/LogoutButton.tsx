@@ -1,10 +1,14 @@
-import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../../../redux/reducers/user/userSlice";
+import { AppDispatch } from "../../../redux/store";
+
 import { Button } from '../Button/Button';
 
 const LogoutButton = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const handleLogout = () => {
-    Cookies.remove("token");
-    window.location.reload();
+    dispatch(logoutUser());
   };
 
   return (

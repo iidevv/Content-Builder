@@ -12,7 +12,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/sign-up", async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     await signUp(req, res);
   } catch (err) {
