@@ -1,21 +1,22 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { AppDispatch, RootState } from "../../redux/store";
 import Preloader from "../common/Preloader/Preloader";
 import Templates from "./Templates";
 import {
     addTemplate,
     getTemplates,
     setSearch,
-} from "../../redux/reducers/templatesSlice";
+} from "../../redux/reducers/templates/templatesSlice";
 
 const TemplatesContainer = () => {
-    const dispatch = useDispatch<typeof store.dispatch>();
+    const dispatch = useDispatch<AppDispatch>();
     const location = useLocation();
     const searchTimeout = useRef<null | ReturnType<typeof setTimeout>>(null);
 
     const { templates, page, search, isFetching } = useSelector(
-        (state) => state.templates
+        (state: RootState) => state.templates
     );
 
     useEffect(() => {

@@ -1,16 +1,27 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { templatesAPI } from "../../api/api";
+import { templatesAPI } from "../../../api/api";
+
+interface TemplatesState {
+  search: string;
+  page: number;
+  totalPages: number;
+  templates: any[];
+  isFetching: boolean;
+  error: any;
+}
+
+const initialState: TemplatesState = {
+  search: "",
+  page: 1,
+  totalPages: 1,
+  templates: [],
+  isFetching: false,
+  error: null,
+};
 
 const templatesSlice = createSlice({
   name: "templates",
-  initialState: {
-    search: "",
-    page: 1,
-    totalPages: 1,
-    templates: [],
-    isFetching: false,
-    error: null,
-  },
+  initialState,
   reducers: {
     setTemplates: (state, action) => {
       state.templates = action.payload;
@@ -53,9 +64,8 @@ const templatesSlice = createSlice({
         state.isFetching = true;
         state.error = null;
       })
-      .addCase(addTemplate.fulfilled, (state, action) => {
+      .addCase(addTemplate.fulfilled, (state) => {
         state.isFetching = false;
-        // Handle the added template if needed
       })
       .addCase(addTemplate.rejected, (state, action) => {
         state.isFetching = false;
@@ -66,7 +76,10 @@ const templatesSlice = createSlice({
 
 export const getTemplates = createAsyncThunk(
   "templates/getTemplates",
-  async ({ page, search }, { rejectWithValue }) => {
+  async (
+    { page, search }: { page: number; search: string },
+    { rejectWithValue }
+  ) => {
     try {
       const data = await templatesAPI.getTemplates(page, search);
       return data;
@@ -88,7 +101,7 @@ export const addTemplate = createAsyncThunk(
       return rejectWithValue(error);
     }
   }
-)
+);
 
 export const { setSearch, setPage } = templatesSlice.actions;
 

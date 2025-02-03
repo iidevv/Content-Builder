@@ -3,8 +3,8 @@ import { createBrowserRouter } from 'react-router-dom';
 import App from '../App.tsx'
 import ErrorPage from '../error-page';
 import TemplatesContainer from '../components/Templates/TemplatesContainer';
-import { Auth } from '../components/Auth/Auth';
-import AuthRoute from '../components/routes/AuthRoute.tsx';
+import Auth from '../components/Auth/Auth';
+import AuthRoute from './AuthRoute.tsx';
 
 const router = createBrowserRouter([
     {

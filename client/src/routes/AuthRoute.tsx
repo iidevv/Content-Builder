@@ -1,19 +1,22 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { isAuthenticated } from "../../utils/auth";
-import { Auth } from "../Auth/Auth";
+import Auth from "../components/Auth/Auth";
+import { RootState } from "../redux/store";
+import { useSelector } from "react-redux";
 
 function AuthRoute({ component: Component }: { component: React.ElementType }) {
     const navigate = useNavigate();
-    const authenticated = isAuthenticated();
+    const { isAuthenticated } = useSelector(
+        (state: RootState) => state.user
+    );
 
     useEffect(() => {
-        if (!authenticated) {
+        if (!isAuthenticated) {
             navigate("/auth");
         }
-    }, [authenticated, navigate]);
+    }, [isAuthenticated, navigate]);
 
-    if (!authenticated) {
+    if (!isAuthenticated) {
         return <Auth />;
     }
 

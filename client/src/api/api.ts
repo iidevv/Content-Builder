@@ -5,8 +5,18 @@ export const instance = axios.create({
   withCredentials: true,
 });
 
+export const authAPI = {
+  login(email: string, password: string) {
+    return instance.post("/auth/login", {
+      email,
+      password,
+      // recaptcha: recaptchaValue,
+    });
+  },
+};
+
 export const templatesAPI = {
-  getTemplates(page, search) {
+  getTemplates(page: number, search: string) {
     return instance
       .get(`/templates/`, {
         params: {
