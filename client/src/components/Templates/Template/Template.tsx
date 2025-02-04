@@ -1,7 +1,9 @@
 
 const Template = () => {
   return (
-    <div>Template</div>
+    <div>
+      
+    </div>
   )
 }
 

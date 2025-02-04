@@ -6,6 +6,7 @@ import ProtectedRoute from './ProtectedRoute.tsx';
 import Login from '../components/Auth/Login.tsx';
 import Register from '../components/Auth/Register.tsx';
 import TemplatesContainer from '../components/Templates/TemplatesContainer';
+import TemplateContainer from '../components/Templates/Template/TemplateContainer.tsx';
 
 const router = createBrowserRouter([
     {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
         children: [{
             index: true,
             element: "",
+        },
+        {
+            path: "/templates/:id",
+            element: <TemplateContainer />,
         },
         {
             path: "/templates",
