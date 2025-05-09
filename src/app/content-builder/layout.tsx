@@ -1,3 +1,5 @@
+import './style.scss'
+
 export const metadata = {
   title: 'Content Builder',
 }
