@@ -39,7 +39,7 @@ export function Client({ id, path, data }: { id: string; path: string; data: Par
           const { appState } = usePuck()
           return (
             <>
-              <button className="button button--secondary" onClick={close}>
+              <button className="button button--secondary" disabled={isSaving} onClick={close}>
                 CLOSE
               </button>
               <button
