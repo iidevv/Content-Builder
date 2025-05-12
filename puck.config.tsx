@@ -3,7 +3,7 @@ import { DropZone, type Config } from '@measured/puck'
 type Props = {
   Container: {}
   Grid: {}
-  Heading: { title: string }
+  Heading: { title: string; padding: number; variant: string }
   Text: {}
   Image: {}
   Video: {}
@@ -35,13 +35,23 @@ export const config: Config<Props> = {
       label: 'Heading',
       fields: {
         title: { type: 'text' },
+        padding: { type: 'number' },
+        variant: {
+          type: 'select',
+          options: [
+            { label: 'blue', value: 'text-[blue]' },
+            { label: 'red', value: 'text-[red]' },
+          ],
+        },
       },
       defaultProps: {
         title: 'Heading',
+        padding: 4,
+        variant: 'blue',
       },
-      render: ({ title }) => (
-        <div className="p-16">
-          <h2>{title}</h2>
+      render: ({ title, padding, variant }) => (
+        <div style={{ padding }}>
+          <h2 className={`${variant}`}>{title}</h2>
         </div>
       ),
     },

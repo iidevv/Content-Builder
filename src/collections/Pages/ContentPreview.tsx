@@ -32,7 +32,10 @@ const ContentPreviewField: UIFieldClientComponent = (props: UIFieldClientProps) 
       </Button>
       <div className="content-preview">
         <div ref={previewRef}>
-          <Render config={config} data={data} />
+          <div className="content-builder-content">
+            <Render config={config} data={data} />
+          </div>
+          <script src="http://localhost:3000/js/content-builder.js" defer></script>
         </div>
       </div>
     </>

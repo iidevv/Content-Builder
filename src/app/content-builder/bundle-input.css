@@ -1,0 +1,5 @@
+@source "../../../safelist.txt";
+
+.content-builder-content {
+  @import 'tailwindcss' important;
+}
