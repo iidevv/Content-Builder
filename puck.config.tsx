@@ -40,7 +40,7 @@ export const config: Config<Props> = {
         title: 'Heading',
       },
       render: ({ title }) => (
-        <div style={{ padding: 64 }}>
+        <div className="p-16">
           <h2>{title}</h2>
         </div>
       ),

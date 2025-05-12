@@ -1,4 +1,4 @@
-import './style.scss'
+import './global.css'
 
 export const metadata = {
   title: 'Content Builder',
