@@ -1,9 +1,16 @@
 import { DropZone, type Config } from '@measured/puck'
 
 type Props = {
-  HeadingBlock: { title: string }
-  GridBlock: {}
-  CardBlock: {
+  Container: {}
+  Grid: {}
+  Heading: { title: string }
+  Text: {}
+  Image: {}
+  Video: {}
+  Button: {}
+  Divider: {}
+  Spacer: {}
+  Card: {
     title: string
     description: string
   }
@@ -11,7 +18,21 @@ type Props = {
 
 export const config: Config<Props> = {
   components: {
-    HeadingBlock: {
+    Container: {
+      render: () => <DropZone zone="container" />,
+    },
+    Grid: {
+      render: () => {
+        return (
+          <DropZone
+            zone="grid"
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}
+          />
+        )
+      },
+    },
+    Heading: {
+      label: 'Heading',
       fields: {
         title: { type: 'text' },
       },
@@ -20,21 +41,30 @@ export const config: Config<Props> = {
       },
       render: ({ title }) => (
         <div style={{ padding: 64 }}>
-          <h1>{title}</h1>
+          <h2>{title}</h2>
         </div>
       ),
     },
-    GridBlock: {
-      render: () => {
-        return (
-          <DropZone
-            zone="my-grid"
-            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)' }}
-          />
-        )
-      },
+    Text: {
+      render: () => <div>Text</div>,
     },
-    CardBlock: {
+    Image: {
+      render: () => <div>Image</div>,
+    },
+    Video: {
+      render: () => <div>Video</div>,
+    },
+    Button: {
+      render: () => <div>Button</div>,
+    },
+    Divider: {
+      render: () => <div>Divider</div>,
+    },
+    Spacer: {
+      render: () => <div>Spacer</div>,
+    },
+    Card: {
+      label: 'Card',
       fields: {
         title: { type: 'text' },
         description: { type: 'textarea' },
@@ -49,6 +79,17 @@ export const config: Config<Props> = {
           <p>{description}</p>
         </div>
       ),
+    },
+  },
+  categories: {
+    layout: {
+      components: ['Container', 'Grid'],
+    },
+    basic: {
+      components: ['Heading', 'Text', 'Image', 'Video', 'Button', 'Divider', 'Spacer'],
+    },
+    interactive: {
+      components: ['Card'],
     },
   },
 }
