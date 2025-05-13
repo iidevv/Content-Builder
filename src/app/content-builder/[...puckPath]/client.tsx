@@ -2,7 +2,7 @@
 
 import type { Data } from '@measured/puck'
 import { Puck, usePuck } from '@measured/puck'
-import config from '../../../../puck.config'
+import config from '@/puck.config'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 

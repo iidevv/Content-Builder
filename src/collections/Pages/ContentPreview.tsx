@@ -2,7 +2,7 @@
 
 import { useDocumentInfo, Button } from '@payloadcms/ui'
 import { UIFieldClientComponent, UIFieldClientProps } from 'payload'
-import config from '../../../puck.config'
+import config from '@/puck.config'
 import type { Data } from '@measured/puck'
 import { Render } from '@measured/puck'
 import { useRef, useState } from 'react'
