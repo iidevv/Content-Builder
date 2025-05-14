@@ -18,7 +18,7 @@ const Spacer: ComponentConfig<Props> = {
     },
   },
   defaultProps: {
-    height: 'h-8 md:h-16 lg:h-24',
+    height: 'h-1 md:h-2 lg:h-4',
   },
   render: ({ height }) => <div className={height}></div>,
 }
