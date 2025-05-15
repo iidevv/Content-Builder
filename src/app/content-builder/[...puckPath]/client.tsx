@@ -4,7 +4,7 @@ import type { Data } from '@measured/puck'
 import { Puck, usePuck } from '@measured/puck'
 import config from '@/puck.config'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Smartphone, Tablet, TvMinimal } from 'lucide-react'
 
 export function Client({ id, path, data }: { id: string; path: string; data: Partial<Data> }) {
@@ -56,6 +56,15 @@ export function Client({ id, path, data }: { id: string; path: string; data: Par
         },
       ]}
       overrides={{
+        iframe: ({ children, document }) => {
+          useEffect(() => {
+            if (document) {
+              document.body.setAttribute('style', 'padding: 10px;')
+            }
+          }, [document])
+
+          return <>{children}</>
+        },
         headerActions: () => {
           const { appState } = usePuck()
           return (
